@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prachi.fullname" . }}
+  labels:
+    {{- include "prachi.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.prachi.autoscaling.enabled }}
+  replicas: {{ .Values.prachi.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "prachi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.prachi.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "prachi.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.prachi.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "prachi.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.prachi.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.prachi.securityContext | nindent 12 }}
+          image: "{{ .Values.prachi.image.repository }}:{{ .Values.prachi.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.prachi.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.prachi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.prachi.resources | nindent 12 }}
+      {{- with .Values.prachi.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.prachi.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.prachi.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

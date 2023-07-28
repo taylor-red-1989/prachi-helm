@@ -1,0 +1,28 @@
+{{- if .Values.prachi.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "prachi.fullname" . }}
+  labels:
+    {{- include "prachi.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "prachi.fullname" . }}
+  minReplicas: {{ .Values.prachi.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.prachi.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.prachi.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.prachi.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.prachi.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.prachi.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
