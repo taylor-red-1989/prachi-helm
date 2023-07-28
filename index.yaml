@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  prachi:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2023-07-28T09:59:25.456031552Z"
+    description: A Helm chart for Kubernetes
+    digest: 4abeacbd2bb805ff9ee2c1fdebe73ac0235696acbdf17fee6bdc84c208d2fe65
+    name: prachi
+    type: application
+    urls:
+    - https://taylor-red-1989.github.io/prachi-helm/prachi-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-07-28T09:59:25.454863954Z"
